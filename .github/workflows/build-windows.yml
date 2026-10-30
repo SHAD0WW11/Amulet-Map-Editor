@@ -60,13 +60,13 @@ jobs:
       with:
         nsis-version: '3.11'
 
-    - name: Windows - Sign and Create Installer
+
+    - name: Windows - Create Installer (Unsigned)
+      shell: bash
       run: |
-        curl -L -o azuresigntool.exe https://github.com/vcsjones/AzureSignTool/releases/download/v7.0.1/AzureSignTool-${{ matrix.cfg.architecture }}.exe
-        find ./installer/dist/amulet -type f \( -name "*.exe" -o -name "*.dll" -o -name "*.pyd" \) -exec ./azuresigntool.exe sign -kvu "${{ secrets.KEY_VAULT_URL }}" -kvc "${{ secrets.KEY_VAULT_CERTIFICATE }}" -kvi "${{ secrets.KEY_VAULT_CLIENT_ID }}" -kvs "${{ secrets.KEY_VAULT_SECRET }}" -kvt "${{ secrets.KEY_VAULT_TENANT }}" -tr http://timestamp.digicert.com -v "{}" \;
-        makensis -DVERSION=${{ github.event.release.tag_name }} -DARCH=${{ matrix.cfg.architecture }} installer/windows.nsi
-        ./azuresigntool.exe sign -kvu "${{ secrets.KEY_VAULT_URL }}" -kvc "${{ secrets.KEY_VAULT_CERTIFICATE }}" -kvi "${{ secrets.KEY_VAULT_CLIENT_ID }}" -kvs "${{ secrets.KEY_VAULT_SECRET }}" -kvt "${{ secrets.KEY_VAULT_TENANT }}" -tr http://timestamp.digicert.com -v "./installer/dist/Amulet-${{ github.event.release.tag_name }}-Windows-${{ matrix.cfg.architecture }}.exe"
+        makensis -DVERSION=${{ github.event.release.tag_name || github.run_number }} -DARCH=${{ matrix.cfg.architecture }} installer/windows.nsi
         rm -rf installer/dist/amulet
+
 
     - name: Publish to PyPi
       env:
