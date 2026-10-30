@@ -60,20 +60,11 @@ jobs:
       with:
         nsis-version: '3.11'
 
-
     - name: Windows - Create Installer (Unsigned)
       shell: bash
       run: |
         makensis -DVERSION=${{ github.event.release.tag_name || github.run_number }} -DARCH=${{ matrix.cfg.architecture }} installer/windows.nsi
         rm -rf installer/dist/amulet
-
-
-    - name: Publish to PyPi
-      env:
-        TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
-        TWINE_PASSWORD: ${{ secrets.AMULET_MAP_EDITOR_PYPI_PASSWORD }}
-      run: |
-        twine upload dist/amulet[_-]map[_-]editor*.tar.gz --skip-existing
 
     - name: Upload Release Asset
       uses: actions/upload-artifact@v6
